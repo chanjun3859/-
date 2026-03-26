@@ -93,9 +93,13 @@
 
         .header-labels {
             display: flex;
-            gap: 12px;
             font-size: 0.85em;
             color: #888;
+        }
+
+        .header-labels span {
+            width: 50px; /* 라벨 너비 고정 */
+            text-align: center;
         }
 
         .raid-list {
@@ -125,9 +129,12 @@
 
         .checkbox-group {
             display: flex;
-            gap: 25px; /* 헤더 라벨 간격에 맞춤 */
-            align-items: center;
-            padding-right: 5px;
+        }
+
+        .checkbox-group .col {
+            width: 50px; /* 체크박스 담는 칸 너비 고정 */
+            display: flex;
+            justify-content: center;
         }
 
         input[type="checkbox"] {
@@ -277,22 +284,22 @@
                             <div class="raid-item">
                                 <span class="raid-name">지평의 성당 3단계</span>
                                 <div class="checkbox-group">
-                                    <input type="checkbox">
-                                    <input type="checkbox">
+                                    <div class="col"><input type="checkbox">
+                                    <div class="col"><input type="checkbox">
                                 </div>
                             </div>
                             <div class="raid-item">
                                 <span class="raid-name">지평의 성당 2단계</span>
                                 <div class="checkbox-group">
-                                    <input type="checkbox">
-                                    <input type="checkbox">
+                                    <div class="col"><input type="checkbox">
+                                    <div class="col"><input type="checkbox">
                                 </div>
                             </div>
                             <div class="raid-item">
                                 <span class="raid-name">레이드 이름 직접 추가</span>
                                 <div class="checkbox-group">
-                                    <input type="checkbox">
-                                    <input type="checkbox">
+                                    <div class="col"><input type="checkbox">
+                                    <div class="col"><input type="checkbox">
                                 </div>
                             </div>
                         </div>
