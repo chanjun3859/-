@@ -50,7 +50,6 @@
             color: #000;
         }
 
-        /* 캐릭터 카드 그리드 (3개씩 배치) */
         .char-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -85,7 +84,6 @@
             font-size: 1.2em;
             font-weight: bold;
             color: var(--point-color);
-            display: block;
         }
 
         .char-level {
@@ -93,16 +91,13 @@
             color: #888;
         }
 
-        /* [NEW] 헤더 라벨 스타일 */
         .header-labels {
             display: flex;
-            gap: 15px; /* 라벨 사이 간격 */
+            gap: 12px;
             font-size: 0.85em;
             color: #888;
-            padding-right: 5px; /* 오른쪽 정렬 조정 */
         }
 
-        /* 레이드 목록 스타일 */
         .raid-list {
             list-style: none;
             padding: 0;
@@ -113,7 +108,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 0;
+            padding: 8px 0;
             font-size: 0.95em;
             border-bottom: 1px solid #2a2a2a;
         }
@@ -121,21 +116,26 @@
         .raid-item:last-child { border-bottom: none; }
 
         .raid-name {
-            flex: 1; /* 이름이 남은 공간 다 차지하게 */
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 10px;
         }
 
-        /* [NEW] 체크박스 그룹 스타일 */
         .checkbox-group {
             display: flex;
-            gap: 20px; /* 두 체크박스 사이 간격, 헤더 라벨 간격과 맞춤 */
+            gap: 25px; /* 헤더 라벨 간격에 맞춤 */
             align-items: center;
+            padding-right: 5px;
         }
 
         input[type="checkbox"] {
             cursor: pointer;
             accent-color: var(--point-color);
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
+            margin: 0;
         }
 
         /* 모달 스타일 */
@@ -181,11 +181,10 @@
             cursor: pointer;
         }
 
-        /* 반응형: 화면 작아지면 1줄로 */
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .char-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .char-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -198,8 +197,7 @@
         <button class="btn-primary" onclick="openModal()">원정대 캐릭터 설정</button>
     </div>
 
-    <div id="charGrid" class="char-grid">
-        </div>
+    <div id="charGrid" class="char-grid"></div>
 
     <div id="inputModal" class="modal">
         <div class="modal-content">
@@ -215,7 +213,6 @@
         const modal = document.getElementById('inputModal');
         const modalInputs = document.getElementById('modalInputs');
 
-        // 초기 입력 필드 생성 (6개)
         for(let i=0; i<6; i++) {
             modalInputs.innerHTML += `
                 <div class="input-row">
@@ -225,14 +222,10 @@
             `;
         }
 
-        // 페이지 로드 시 실행
-        window.onload = () => {
-            loadData();
-        };
+        window.onload = loadData;
 
         function openModal() {
             modal.style.display = 'flex';
-            // 기존 데이터가 있다면 필드에 채워넣기
             const saved = JSON.parse(localStorage.getItem('loacal-chars') || '[]');
             const names = document.querySelectorAll('.in-name');
             const lvs = document.querySelectorAll('.in-lv');
@@ -250,13 +243,11 @@
             const names = document.querySelectorAll('.in-name');
             const lvs = document.querySelectorAll('.in-lv');
             let dataArr = [];
-
             names.forEach((el, i) => {
                 if(el.value.trim() !== "") {
                     dataArr.push({ name: el.value, lv: lvs[i].value });
                 }
             });
-
             localStorage.setItem('loacal-chars', JSON.stringify(dataArr));
             renderCards(dataArr);
             closeModal();
@@ -269,8 +260,7 @@
 
         function renderCards(chars) {
             charGrid.innerHTML = '';
-            chars.forEach((char, index) => {
-                // [MODIFIED] 레이드 목록 HTML 구조 변경 (체크박스 2개 추가)
+            chars.forEach((char) => {
                 charGrid.innerHTML += `
                     <div class="char-card">
                         <div class="char-header">
@@ -287,17 +277,23 @@
                             <div class="raid-item">
                                 <span class="raid-name">지평의 성당 3단계</span>
                                 <div class="checkbox-group">
-                                    <input type="checkbox"> <input type="checkbox"> </div>
+                                    <input type="checkbox">
+                                    <input type="checkbox">
+                                </div>
                             </div>
                             <div class="raid-item">
                                 <span class="raid-name">지평의 성당 2단계</span>
                                 <div class="checkbox-group">
-                                    <input type="checkbox"> <input type="checkbox"> }
+                                    <input type="checkbox">
+                                    <input type="checkbox">
+                                </div>
                             </div>
                             <div class="raid-item">
                                 <span class="raid-name">레이드 이름 직접 추가</span>
                                 <div class="checkbox-group">
-                                    <input type="checkbox"> <input type="checkbox"> }
+                                    <input type="checkbox">
+                                    <input type="checkbox">
+                                </div>
                             </div>
                         </div>
                     </div>
