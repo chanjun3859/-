@@ -3,23 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-
     <title>로스트아크 주간 클리어 골드 계산표</title>
     <style>
+        /* 기본 스타일: 검은 배경 & 가운데 정렬 */
         body {
-            background-color: black;
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff9d00; /* 로아 느낌 포인트 컬러 */
+            margin-bottom: 20px;
+        }
+
+        /* 버튼 스타일 */
+        .btn-primary {
+            background-color: #333;
             color: white;
-            font-family: sans-serif;
-            padding: 20px;
+            border: 1px solid #555;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff9d00;
+            color: #000;
+        }
+
+        /* 팝업(모달) 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .char-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        .save-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background-color: #ff9d00;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* 결과 표시 영역 */
+        #character-list {
+            margin-top: 30px;
+            text-align: left;
         }
     </style>
 </head>
 <body>
+
     <h1>로스트아크 주간 클리어 골드 계산표</h1>
-    <p>여기에 레이드별 골드 계산 기능을 추가할 수 있습니다.</p>
+    
+    <button class="btn-primary" onclick="openModal()">원정대 입력하기</button>
+
+    <div id="character-list"></div>
+
+    <div id="inputModal" class="modal">
+        <div class="modal-content">
+            <h3>원정대 캐릭터 설정 (최대 6캐릭)</h3>
+            <div id="input-container">
+                </div>
+            <button class="save-btn" onclick="saveCharacters()">저장하기</button>
+            <button style="margin-top:10px; background:none; color:gray; border:none; cursor:pointer;" onclick="closeModal()">취소</button>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('inputModal');
+        const container = document.getElementById('input-container');
+
+        // 6개의 입력 칸 생성
+        for (let i = 1; i <= 6; i++) {
+            container.innerHTML += `
+                <div class="char-input-group">
+                    <span>${i}</span>
+                    <input type="text" placeholder="캐릭터명" class="name-input">
+                    <input type="number" placeholder="템레벨" class="lv-input">
+                </div>
+            `;
+        }
+
+        function openModal() { modal.style.display = 'flex'; }
+        function closeModal() { modal.style.display = 'none'; }
+
+        function saveCharacters() {
+            const names = document.querySelectorAll('.name-input');
+            const levels = document.querySelectorAll('.lv-input');
+            let html = "<h3>내 원정대</h3><ul>";
+            
+            names.forEach((input, index) => {
+                if (input.value) {
+                    html += `<li><strong>${input.value}</strong> (Lv.${levels[index].value || '0'})</li>`;
+                }
+            });
+
+            html += "</ul>";
+            document.getElementById('character-list').innerHTML = html;
+            closeModal();
+        }
+    </script>
 </body>
 </html>
