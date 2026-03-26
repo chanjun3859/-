@@ -71,6 +71,14 @@
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
             margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .char-info {
+            display: flex;
+            flex-direction: column;
         }
 
         .char-name {
@@ -83,6 +91,15 @@
         .char-level {
             font-size: 0.9em;
             color: #888;
+        }
+
+        /* [NEW] 헤더 라벨 스타일 */
+        .header-labels {
+            display: flex;
+            gap: 15px; /* 라벨 사이 간격 */
+            font-size: 0.85em;
+            color: #888;
+            padding-right: 5px; /* 오른쪽 정렬 조정 */
         }
 
         /* 레이드 목록 스타일 */
@@ -103,9 +120,22 @@
 
         .raid-item:last-child { border-bottom: none; }
 
+        .raid-name {
+            flex: 1; /* 이름이 남은 공간 다 차지하게 */
+        }
+
+        /* [NEW] 체크박스 그룹 스타일 */
+        .checkbox-group {
+            display: flex;
+            gap: 20px; /* 두 체크박스 사이 간격, 헤더 라벨 간격과 맞춤 */
+            align-items: center;
+        }
+
         input[type="checkbox"] {
             cursor: pointer;
             accent-color: var(--point-color);
+            width: 16px;
+            height: 16px;
         }
 
         /* 모달 스타일 */
@@ -240,17 +270,35 @@
         function renderCards(chars) {
             charGrid.innerHTML = '';
             chars.forEach((char, index) => {
-                // 여기에 레이드 목록을 추가하면 됩니다!
+                // [MODIFIED] 레이드 목록 HTML 구조 변경 (체크박스 2개 추가)
                 charGrid.innerHTML += `
                     <div class="char-card">
                         <div class="char-header">
-                            <span class="char-name">${char.name}</span>
-                            <span class="char-level">Lv. ${char.lv}</span>
+                            <div class="char-info">
+                                <span class="char-name">${char.name}</span>
+                                <span class="char-level">Lv. ${char.lv}</span>
+                            </div>
+                            <div class="header-labels">
+                                <span>클리어</span>
+                                <span>더보기</span>
+                            </div>
                         </div>
                         <div class="raid-list">
-                            <div class="raid-item"><span>지평의 성당 3단계</span> <input type="checkbox"></div>
-                            <div class="raid-item"><span>지평의 성당 2단계</span> <input type="checkbox"></div>
-                            <div class="raid-item"><span>레이드 이름 직접 추가</span> <input type="checkbox"></div>
+                            <div class="raid-item">
+                                <span class="raid-name">지평의 성당 3단계</span>
+                                <div class="checkbox-group">
+                                    <input type="checkbox"> <input type="checkbox"> </div>
+                            </div>
+                            <div class="raid-item">
+                                <span class="raid-name">지평의 성당 2단계</span>
+                                <div class="checkbox-group">
+                                    <input type="checkbox"> <input type="checkbox"> }
+                            </div>
+                            <div class="raid-item">
+                                <span class="raid-name">레이드 이름 직접 추가</span>
+                                <div class="checkbox-group">
+                                    <input type="checkbox"> <input type="checkbox"> }
+                            </div>
                         </div>
                     </div>
                 `;
