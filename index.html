@@ -4,73 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>로스트아크 주간 클리어 골드 계산표</title>
     <style>
-        /* 기본 스타일: 검은 배경 & 가운데 정렬 */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --point-color: #ff9d00;
+            --text-color: #e0e0e0;
+            --border-color: #333;
+        }
+
         body {
-            background-color: #121212;
-            color: #e0e0e0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            text-align: center;
         }
 
         h1 {
-            color: #ff9d00; /* 로아 느낌 포인트 컬러 */
+            color: var(--point-color);
+            margin-top: 0;
             margin-bottom: 20px;
         }
 
-        /* 버튼 스타일 */
+        .btn-group {
+            margin-bottom: 30px;
+        }
+
         .btn-primary {
             background-color: #333;
             color: white;
             border: 1px solid #555;
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 10px 20px;
             cursor: pointer;
             border-radius: 4px;
             transition: 0.3s;
         }
 
         .btn-primary:hover {
-            background-color: #ff9d00;
+            background-color: var(--point-color);
             color: #000;
         }
 
-        /* 팝업(모달) 스타일 */
+        /* 캐릭터 카드 그리드 (3개씩 배치) */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .char-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .char-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .char-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--point-color);
+            display: block;
+        }
+
+        .char-level {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        /* 레이드 목록 스타일 */
+        .raid-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .raid-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            font-size: 0.95em;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .raid-item:last-child { border-bottom: none; }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: var(--point-color);
+        }
+
+        /* 모달 스타일 */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
+            background: rgba(0,0,0,0.8);
+            justify-content: center; align-items: center;
+            z-index: 100;
         }
 
         .modal-content {
-            background-color: #1e1e1e;
-            padding: 30px;
+            background: var(--card-bg);
+            padding: 25px;
             border-radius: 8px;
-            border: 1px solid #444;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
         }
 
-        .char-input-group {
+        .input-row {
             display: flex;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        input {
-            background-color: #2a2a2a;
+        .input-row input {
+            background: #2a2a2a;
             border: 1px solid #444;
             color: white;
             padding: 8px;
@@ -79,72 +142,119 @@
         }
 
         .save-btn {
-            margin-top: 20px;
             width: 100%;
-            padding: 10px;
-            background-color: #ff9d00;
+            padding: 12px;
+            background: var(--point-color);
             border: none;
             font-weight: bold;
+            margin-top: 15px;
             cursor: pointer;
         }
 
-        /* 결과 표시 영역 */
-        #character-list {
-            margin-top: 30px;
-            text-align: left;
+        /* 반응형: 화면 작아지면 1줄로 */
+        @media (max-width: 900px) {
+            .char-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .char-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
     <h1>로스트아크 주간 클리어 골드 계산표</h1>
-    
-    <button class="btn-primary" onclick="openModal()">원정대 입력하기</button>
 
-    <div id="character-list"></div>
+    <div class="btn-group">
+        <button class="btn-primary" onclick="openModal()">원정대 캐릭터 설정</button>
+    </div>
+
+    <div id="charGrid" class="char-grid">
+        </div>
 
     <div id="inputModal" class="modal">
         <div class="modal-content">
-            <h3>원정대 캐릭터 설정 (최대 6캐릭)</h3>
-            <div id="input-container">
-                </div>
-            <button class="save-btn" onclick="saveCharacters()">저장하기</button>
-            <button style="margin-top:10px; background:none; color:gray; border:none; cursor:pointer;" onclick="closeModal()">취소</button>
+            <h3 style="margin-top:0">캐릭터 정보 입력 (최대 6명)</h3>
+            <div id="modalInputs"></div>
+            <button class="save-btn" onclick="saveData()">저장 및 적용</button>
+            <button onclick="closeModal()" style="background:none; border:none; color:gray; width:100%; cursor:pointer; margin-top:10px;">닫기</button>
         </div>
     </div>
 
     <script>
+        const charGrid = document.getElementById('charGrid');
         const modal = document.getElementById('inputModal');
-        const container = document.getElementById('input-container');
+        const modalInputs = document.getElementById('modalInputs');
 
-        // 6개의 입력 칸 생성
-        for (let i = 1; i <= 6; i++) {
-            container.innerHTML += `
-                <div class="char-input-group">
-                    <span>${i}</span>
-                    <input type="text" placeholder="캐릭터명" class="name-input">
-                    <input type="number" placeholder="템레벨" class="lv-input">
+        // 초기 입력 필드 생성 (6개)
+        for(let i=0; i<6; i++) {
+            modalInputs.innerHTML += `
+                <div class="input-row">
+                    <input type="text" class="in-name" placeholder="캐릭터명">
+                    <input type="number" class="in-lv" placeholder="레벨">
                 </div>
             `;
         }
 
-        function openModal() { modal.style.display = 'flex'; }
+        // 페이지 로드 시 실행
+        window.onload = () => {
+            loadData();
+        };
+
+        function openModal() {
+            modal.style.display = 'flex';
+            // 기존 데이터가 있다면 필드에 채워넣기
+            const saved = JSON.parse(localStorage.getItem('loacal-chars') || '[]');
+            const names = document.querySelectorAll('.in-name');
+            const lvs = document.querySelectorAll('.in-lv');
+            saved.forEach((data, i) => {
+                if(i < 6) {
+                    names[i].value = data.name;
+                    lvs[i].value = data.lv;
+                }
+            });
+        }
+
         function closeModal() { modal.style.display = 'none'; }
 
-        function saveCharacters() {
-            const names = document.querySelectorAll('.name-input');
-            const levels = document.querySelectorAll('.lv-input');
-            let html = "<h3>내 원정대</h3><ul>";
-            
-            names.forEach((input, index) => {
-                if (input.value) {
-                    html += `<li><strong>${input.value}</strong> (Lv.${levels[index].value || '0'})</li>`;
+        function saveData() {
+            const names = document.querySelectorAll('.in-name');
+            const lvs = document.querySelectorAll('.in-lv');
+            let dataArr = [];
+
+            names.forEach((el, i) => {
+                if(el.value.trim() !== "") {
+                    dataArr.push({ name: el.value, lv: lvs[i].value });
                 }
             });
 
-            html += "</ul>";
-            document.getElementById('character-list').innerHTML = html;
+            localStorage.setItem('loacal-chars', JSON.stringify(dataArr));
+            renderCards(dataArr);
             closeModal();
+        }
+
+        function loadData() {
+            const saved = JSON.parse(localStorage.getItem('loacal-chars') || '[]');
+            renderCards(saved);
+        }
+
+        function renderCards(chars) {
+            charGrid.innerHTML = '';
+            chars.forEach((char, index) => {
+                // 여기에 레이드 목록을 추가하면 됩니다!
+                charGrid.innerHTML += `
+                    <div class="char-card">
+                        <div class="char-header">
+                            <span class="char-name">${char.name}</span>
+                            <span class="char-level">Lv. ${char.lv}</span>
+                        </div>
+                        <div class="raid-list">
+                            <div class="raid-item"><span>지평의 성당 3단계</span> <input type="checkbox"></div>
+                            <div class="raid-item"><span>지평의 성당 2단계</span> <input type="checkbox"></div>
+                            <div class="raid-item"><span>레이드 이름 직접 추가</span> <input type="checkbox"></div>
+                        </div>
+                    </div>
+                `;
+            });
         }
     </script>
 </body>
